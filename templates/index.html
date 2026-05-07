@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Manager</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Employee Manager</h1>
+      <p>Add and view employee details with a simple HTML/CSS UI.</p>
+    </header>
+
+    <section class="card">
+      <h2>Add New Employee</h2>
+      <form id="employee-form" action="/add" method="POST">
+        <label>
+          Name
+          <input type="text" name="name" required />
+        </label>
+
+        <label>
+          Phone Number
+          <input type="text" name="phone_number" required />
+        </label>
+
+        <button type="submit">Save Employee</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Employee List</h2>
+      <div id="employee-list">Loading employees...</div>
+    </section>
+  </main>
+
+  <script>
+    async function loadEmployees() {
+      const response = await fetch('/employees');
+      const employees = await response.json();
+      const container = document.getElementById('employee-list');
+
+      if (!employees.length) {
+        container.innerHTML = '<p>No employees added yet.</p>';
+        return;
+      }
+
+      const rows = employees
+        .map((employee, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${employee.name}</td>
+            <td>${employee.phone_number}</td>
+          </tr>
+        `)
+        .join('');
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Phone</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadEmployees();
+    });
+  </script>
+</body>
+</html>
